@@ -1,0 +1,19 @@
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+.terraform.lock.hcl
+
+**/.idea/*
+*.iml
+
+# venv
+venv
+__pycache__
