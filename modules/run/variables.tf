@@ -15,11 +15,7 @@ variable "project_id" {
 
 variable "application_env" {
   type = string
-  description = "Environment that this service sits in."
-  validation {
-    condition     = contains(["staging", "production"], var.application_env)
-    error_message = "Valid values for var: application_env are (staging, production)."
-  }
+  description = "Application env"
 }
 
 variable "application_name" {
