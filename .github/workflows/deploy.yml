@@ -46,7 +46,7 @@ name: Build and Deploy to Cloud Run
 
 on:
   push:
-    branches: *
+    branches: '**'
 
 env:
   GAR_PROJECT_ID: devops-tf-397305 
