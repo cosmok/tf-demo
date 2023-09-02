@@ -92,3 +92,32 @@ jobs:
       - name: Terraform Apply
         run: cd staging && terraform apply -var="image_url=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GAR_PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"  -input=false -auto-approve
 #  deploy-production:
+  deploy-production:
+    needs: [ 'deploy-staging' ]
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    environment: production
+    #if: $ {{ github.ref_name == 'refs/heads/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v0'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: cd production && terraform init
+
+      - name: Terraform Plan
+        run: cd production && terraform plan -var="image_url=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GAR_PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}" -input=false
+
+      - name: Terraform Apply
+        run: cd production && terraform apply -var="image_url=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GAR_PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"  -input=false -auto-approve
