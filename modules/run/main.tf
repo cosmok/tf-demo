@@ -5,7 +5,7 @@ resource "google_cloud_run_v2_service" "default" {
 
   template {
     containers {
-      image = "australia-southeast1-docker.pkg.dev/devops-tf-397305/test/hello:v1"
+      image = var.image_url
       ports {
         container_port = 5000
       }
